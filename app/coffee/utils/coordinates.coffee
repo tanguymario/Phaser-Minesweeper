@@ -68,6 +68,11 @@ class Coordinates
     @y /= factor
 
 
+  equals: (coordsB) ->
+    assert coordsB instanceof Coordinates
+    return @x == coordsB.x and @y == coordsB.y
+
+
   clone: ->
     return new Coordinates @x, @y
 
