@@ -1,0 +1,55 @@
+{
+  "name": "phaser-minesweeper",
+  "version": "1.0.0",
+  "description": "Minesweeper made with phaser",
+  "main": "index.js",
+  "scripts": {
+    "all": "npm run build && npm run serve",
+    "build": "npm run test && gulp build",
+    "clean": "gulp clean",
+    "serve": "http-server dist",
+    "test": "gulp lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tanguymario/Phaser-Minesweeper.git"
+  },
+  "keywords": [
+    "Minesweeper",
+    "Demineurs",
+    "Phaser"
+  ],
+  "author": "tanguymario",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/tanguymario/Phaser-Minesweeper/issues"
+  },
+  "homepage": "https://github.com/tanguymario/Phaser-Minesweeper#readme",
+  "devDependencies": {
+    "assert": "^1.4.1",
+    "browserify": "^14.1.0",
+    "browserify-shim": "^3.8.13",
+    "coffeeify": "^2.1.0",
+    "enum": "^2.4.0",
+    "gulp": "^3.9.1",
+    "gulp-coffeelint": "^0.6.0",
+    "gulp-stylus": "^2.6.0",
+    "gulp-uglify": "^2.0.1",
+    "http-server": "^0.9.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "Phaser": "global:Phaser"
+  },
+  "coffeelintConfig": {
+    "max_line_length": {
+      "level": "ignore"
+    }
+  }
+}

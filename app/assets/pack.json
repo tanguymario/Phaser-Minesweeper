@@ -1,0 +1,21 @@
+{
+  "preload":
+  [
+    
+  ],
+  "main":
+  [
+
+  ],
+  "menu":
+  [
+  ],
+  "game":
+  [
+    {
+      "type": "image",
+      "key": "game-background",
+      "url": "assets/img/game-background-960.jpg"
+    }
+  ]
+}
