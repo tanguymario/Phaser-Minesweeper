@@ -42,10 +42,13 @@ class Grid
     # Generate bombs in the map
     @generateBombs()
 
+    for i in [0..@w - 1] by 1
+      for j in [0..@h - 1] by 1
+        currentCase = @tab[i][j]
+        currentCase.nbBombsAround = @getNbBomsAroundCase currentCase
 
-  sweepCase: (centerCase) ->
-    cases = new Array()
 
+  getNbBomsAroundCase: (centerCase) ->
     nbBombsAround = 0
     currCaseCoords = centerCase.coords.clone()
     for i in [-1..1] by 1
@@ -64,17 +67,30 @@ class Grid
         currentCase = @getCaseAt currCaseCoords
         if currentCase.hasBomb
           nbBombsAround += 1
-        else if nbBombsAround == 0
-          if not currentCase.discovered
-            cases.push currentCase
 
-    centerCase.showNbBombsAround nbBombsAround
-    centerCase.discovered = true
+    return nbBombsAround
 
-    if nbBombsAround == 0
-      for currentCase in cases
-        @sweepCase currentCase
+  getCasesAround: (centerCase) ->
+    cases = new Array()
+    currCaseCoords = centerCase.coords.clone()
 
+    for i in [-1..1] by 1
+      for j in [-1..1] by 1
+        if i == 0 and j == 0
+          continue
+
+        currCaseCoords.x = centerCase.coords.x + i
+        currCaseCoords.y = centerCase.coords.y + j
+
+        # Check if case in grid
+        if not @isInGrid currCaseCoords
+          continue
+
+        # Check if the case was not discovered
+        currentCase = @getCaseAt currCaseCoords
+        cases.push currentCase
+
+    return cases
 
   showBombs: ->
     for i in [0..@w - 1] by 1
@@ -116,6 +132,7 @@ class Grid
     randomX = Math.floor(Math.random() * @w)
     randomY = Math.floor(Math.random() * @h)
     randomCoords = new Coordinates randomX, randomY
+
 
   isInGrid: (coords) ->
     return coords.x >= 0 and coords.y >= 0 and coords.x < @w and coords.y < @h

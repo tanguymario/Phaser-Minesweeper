@@ -38,24 +38,41 @@ class Case
     @hasBomb = bomb
     @hasFlag = false
     @discovered = false
+    @nbBombsAround = 0
+    @nbFlagsAround = 0
 
     @sprite = @grid.sprites.create gameCoords.x, gameCoords.y, Case.S_CASE_UNCLICKED
     @sprite.inputEnabled = true
-    @sprite.events.onInputDown.add @show, @
+    @sprite.events.onInputDown.add @onClick, @
     @sprite.scale.setTo spriteScale, spriteScale
 
 
-  show: ->
+  onClick: ->
+    if @game.input.activePointer.leftButton.isDown
+      @show()
+    else if @game.input.activePointer.rightButton.isDown
+      @toggleFlag()
+    else if @game.input.activePointer.middleButton.isDown
+      @grid.sweepCase(@, true)
+
+
+  show: (sprite, pointer) ->
+    if @hasFlag or @discovered
+      return
+
     @discovered = true
     if @hasBomb
       @clickBomb()
     else
-      @grid.sweepCase(@)
+      @showNbBombsAround()
+      if @nbBombsAround == 0
+        cases = @grid.getCasesAround(@)
+        for currentCase in cases
+          currentCase.show()
 
 
-  showNbBombsAround: (nbBombsAround) ->
-    assert nbBombsAround >= 0 and nbBombsAround <= 8, "Too much bombs : " + nbBombsAround
-    @sprite.loadTexture Case.S_CASE_NUMBERS[nbBombsAround]
+  showNbBombsAround: () ->
+    @sprite.loadTexture Case.S_CASE_NUMBERS[@nbBombsAround]
 
 
   clickBomb: ->
@@ -73,8 +90,12 @@ class Case
     @sprite.loadTexture spriteKey
 
 
+
   toggleFlag: ->
-    @hasFlag = !hasFlag
+    if @discovered
+      return
+
+    @hasFlag = !@hasFlag
 
     if @hasFlag
       spriteKey = Case.S_CASE_FLAG
