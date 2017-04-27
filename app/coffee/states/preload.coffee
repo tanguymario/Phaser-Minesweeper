@@ -13,7 +13,7 @@ class Preload extends Phaser.State
   preload: ->
     debug 'Preload...', @, 'info', 30, debugThemes.Phaser
 
-    @load.setPreloadSprite @add.sprite @game.world.centerX - 160, @game.world.centerY - 16, 'preloadBar'
+    # @load.setPreloadSprite @add.sprite @game.world.centerX - 160, @game.world.centerY - 16, 'preloadBar'
 
     @stage.backgroundColor = 'black'
 

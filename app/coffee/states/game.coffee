@@ -1,5 +1,8 @@
 Phaser = require 'Phaser'
 
+Grid = require '../minesweeper/grid.coffee'
+Case = require '../minesweeper/case.coffee'
+
 config      = require '../config/config.coffee'
 
 debug       = require '../utils/debug.coffee'
@@ -18,6 +21,7 @@ class Game extends Phaser.State
 
   create: ->
     debug 'Create...', @, 'info', 30, debugThemes.Phaser
+    @grid = new Grid @, 10, 10, 10, 50
 
 
   update: ->

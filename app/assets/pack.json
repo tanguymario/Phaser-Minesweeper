@@ -1,7 +1,7 @@
 {
   "preload":
   [
-    
+
   ],
   "main":
   [
@@ -14,8 +14,83 @@
   [
     {
       "type": "image",
-      "key": "game-background",
-      "url": "assets/img/game-background-960.jpg"
+      "key": "case-unclicked",
+      "url": "assets/img/minesweeper/classic_color/case-unclicked.jpg"
+    },
+    {
+      "type": "image",
+      "key": "case-clicked",
+      "url": "assets/img/minesweeper/classic_color/case-clicked.jpg"
+    },
+    {
+      "type": "image",
+      "key": "case-flag",
+      "url": "assets/img/minesweeper/classic_color/case-flag.jpg"
+    },
+    {
+      "type": "image",
+      "key": "case-dunno-unclicked",
+      "url": "assets/img/minesweeper/classic_color/case-dunno-unclicked.jpg"
+    },
+    {
+      "type": "image",
+      "key": "case-dunno-clicked",
+      "url": "assets/img/minesweeper/classic_color/case-dunno-clicked.jpg"
+    },
+    {
+      "type": "image",
+      "key": "case-bomb-unclicked",
+      "url": "assets/img/minesweeper/classic_color/case-bomb-unclicked.jpg"
+    },
+    {
+      "type": "image",
+      "key": "case-bomb-clicked",
+      "url": "assets/img/minesweeper/classic_color/case-bomb-clicked.jpg"
+    },
+    {
+      "type": "image",
+      "key": "case-wrong-flag",
+      "url": "assets/img/minesweeper/classic_color/case-wrong-flag.jpg"
+    },
+    {
+      "type": "image",
+      "key": "case-1",
+      "url": "assets/img/minesweeper/classic_color/case-1.jpg"
+    },
+    {
+      "type": "image",
+      "key": "case-2",
+      "url": "assets/img/minesweeper/classic_color/case-2.jpg"
+    },
+    {
+      "type": "image",
+      "key": "case-3",
+      "url": "assets/img/minesweeper/classic_color/case-3.jpg"
+    },
+    {
+      "type": "image",
+      "key": "case-4",
+      "url": "assets/img/minesweeper/classic_color/case-4.jpg"
+    },
+    {
+      "type": "image",
+      "key": "case-5",
+      "url": "assets/img/minesweeper/classic_color/case-5.jpg"
+    },
+    {
+      "type": "image",
+      "key": "case-6",
+      "url": "assets/img/minesweeper/classic_color/case-6.jpg"
+    },
+    {
+      "type": "image",
+      "key": "case-7",
+      "url": "assets/img/minesweeper/classic_color/case-7.jpg"
+    },
+    {
+      "type": "image",
+      "key": "case-8",
+      "url": "assets/img/minesweeper/classic_color/case-8.jpg"
     }
   ]
 }

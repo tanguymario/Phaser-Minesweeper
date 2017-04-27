@@ -10,12 +10,15 @@ class Boot extends Phaser.State
     debug 'Constructor...', @, 'info', 30, debugThemes.Phaser
     super
 
+
   preload: ->
     debug 'Preload...', @, 'info', 30, debugThemes.Phaser
     @load.pack 'preload', config.pack
 
+
   create: ->
     debug 'Create...', @, 'info', 30, debugThemes.Phaser
     @state.start 'Preload'
+
 
 module.exports = Boot
