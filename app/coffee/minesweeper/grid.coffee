@@ -19,6 +19,10 @@ class Grid
     @caseSize = caseSize
     @sprites = @game.add.group()
 
+    @nbCasesTotal = w * h
+    @nbFlagsTotal = 0
+    @nbCasesDiscoveredTotal = 0
+
     topLeftX = @game.world.centerX - (@caseSize * @w) / 2 - @caseSize / 2
     topLeftY = @game.world.centerY - (@caseSize * @h) / 2 - @caseSize / 2
     topLeftCoords = new Coordinates topLeftX, topLeftY
@@ -42,11 +46,15 @@ class Grid
     # Generate bombs in the map
     @generateBombs()
 
+    # Update bombs
     for i in [0..@w - 1] by 1
       for j in [0..@h - 1] by 1
-        currentCase = @tab[i][j]
-        currentCase.nbBombsAround = @getNbBomsAroundCase currentCase
+        @tab[i][j].updateNbBombsAroundCase()
 
+
+  checkWin: ->
+    if @nbCasesDiscoveredTotal >= @nbCasesTotal - @nbBombs
+      alert 'win!'
 
   getNbBomsAroundCase: (centerCase) ->
     nbBombsAround = 0
@@ -70,6 +78,7 @@ class Grid
 
     return nbBombsAround
 
+
   getCasesAround: (centerCase) ->
     cases = new Array()
     currCaseCoords = centerCase.coords.clone()
@@ -92,6 +101,7 @@ class Grid
 
     return cases
 
+
   showBombs: ->
     for i in [0..@w - 1] by 1
       for j in [0..@h - 1] by 1
@@ -99,6 +109,8 @@ class Grid
         if not currentCase.discovered
           if currentCase.hasBomb
             currentCase.showBomb()
+          else if currentCase.hasFlag
+            currentCase.showWrongFlag()
 
 
   removeListeners: ->

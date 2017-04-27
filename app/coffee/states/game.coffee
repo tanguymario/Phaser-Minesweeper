@@ -21,7 +21,7 @@ class Game extends Phaser.State
 
   create: ->
     debug 'Create...', @, 'info', 30, debugThemes.Phaser
-    @grid = new Grid @, 25, 25, 10, 25
+    @grid = new Grid @, 15, 15, 10, 25
     @game.input.mouse.capture = true;
     @game.canvas.oncontextmenu = (e) ->
       e.preventDefault()

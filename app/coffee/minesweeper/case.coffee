@@ -53,14 +53,18 @@ class Case
     else if @game.input.activePointer.rightButton.isDown
       @toggleFlag()
     else if @game.input.activePointer.middleButton.isDown
-      @grid.sweepCase(@, true)
+      @showWithFlags()
 
+
+  updateNbBombsAroundCase: ->
+    @nbBombsAround = @grid.getNbBomsAroundCase(@)
 
   show: (sprite, pointer) ->
     if @hasFlag or @discovered
       return
 
     @discovered = true
+    @grid.nbCasesDiscoveredTotal += 1
     if @hasBomb
       @clickBomb()
     else
@@ -69,6 +73,15 @@ class Case
         cases = @grid.getCasesAround(@)
         for currentCase in cases
           currentCase.show()
+      else
+        @grid.checkWin()
+
+
+  showWithFlags: ->
+    if @nbFlagsAround == @nbBombsAround
+      cases = @grid.getCasesAround(@)
+      for currentCase in cases
+        currentCase.show()
 
 
   showNbBombsAround: () ->
@@ -90,6 +103,9 @@ class Case
     @sprite.loadTexture spriteKey
 
 
+  showWrongFlag: ->
+    @sprite.loadTexture Case.S_CASE_WRONG_FLAG
+
 
   toggleFlag: ->
     if @discovered
@@ -98,9 +114,17 @@ class Case
     @hasFlag = !@hasFlag
 
     if @hasFlag
+      nbFlagsDifference = 1
       spriteKey = Case.S_CASE_FLAG
     else
+      nbFlagsDifference = -1
       spriteKey = Case.S_CASE_UNCLICKED
+
+    cases = @grid.getCasesAround(@)
+    for currentCase in cases
+      currentCase.nbFlagsAround += nbFlagsDifference
+
+    @grid.nbFlagsTotal += nbFlagsDifference
 
     @sprite.loadTexture spriteKey
 
