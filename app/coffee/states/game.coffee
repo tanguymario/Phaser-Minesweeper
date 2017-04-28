@@ -21,9 +21,13 @@ class Game extends Phaser.State
 
   create: ->
     debug 'Create...', @, 'info', 30, debugThemes.Phaser
-    @grid = new Grid @, 15, 15, 10, 25
-    @game.input.mouse.capture = true;
+    @grid = new Grid @, 30, 15, 10, 25
+
+    @game.input.mouse.onMouseWheel = (event) ->
+      @game.state.states.Game.grid.zoomGrid event
+
     @game.canvas.oncontextmenu = (e) ->
       e.preventDefault()
+
 
 module.exports = Game

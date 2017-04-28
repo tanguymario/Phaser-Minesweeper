@@ -8,6 +8,9 @@ debug       = require '../utils/debug.coffee'
 debugThemes = require '../utils/debug-themes.coffee'
 
 class Grid
+
+  @I_ZOOM_FACTOR = 50
+
   constructor: (game, w, h, nbBombs, caseSize) ->
     assert nbBombs < w * h, "Too much bombs!"
 
@@ -23,25 +26,13 @@ class Grid
     @nbFlagsTotal = 0
     @nbCasesDiscoveredTotal = 0
 
-    topLeftX = @game.world.centerX - (@caseSize * @w) / 2 - @caseSize / 2
-    topLeftY = @game.world.centerY - (@caseSize * @h) / 2 - @caseSize / 2
-    topLeftCoords = new Coordinates topLeftX, topLeftY
-    currentGameCoords = topLeftCoords.clone()
-
-    spriteScale = @caseSize / Case.S_SIZE
-
     # Generate blank map
     @tab = new Array(@w)
     for i in [0..@w - 1] by 1
       @tab[i] = new Array(@h)
       for j in [0..@h - 1] by 1
         currentGridCoords = new Coordinates(i, j)
-        @tab[i][j] = new Case @game, @, currentGridCoords, false, currentGameCoords, spriteScale
-
-        currentGameCoords.y += @caseSize
-
-      currentGameCoords.y = topLeftCoords.y
-      currentGameCoords.x += @caseSize
+        @tab[i][j] = new Case @game, @, currentGridCoords, false
 
     # Generate bombs in the map
     @generateBombs()
@@ -52,9 +43,43 @@ class Grid
         @tab[i][j].updateNbBombsAroundCase()
 
 
+    @updateCasesTransform()
+
+  zoomGrid: (event) ->
+    if event.shiftKey
+      @caseSize += event.wheelDeltaY / Grid.I_ZOOM_FACTOR
+      @updateCasesTransform()
+
+
+  updateCasesTransform: ->
+    topLeftX = @game.world.centerX - (@caseSize * @w) / 2 - @caseSize / 2
+    topLeftY = @game.world.centerY - (@caseSize * @h) / 2 - @caseSize / 2
+    topLeftCoords = new Coordinates topLeftX, topLeftY
+    currentGameCoords = topLeftCoords.clone()
+
+    spriteScale = @caseSize / Case.S_SIZE
+
+    for i in [0..@w - 1] by 1
+      for j in [0..@h - 1] by 1
+        currentSprite = @tab[i][j].sprite
+
+        # Position
+        currentSprite.x = currentGameCoords.x
+        currentSprite.y = currentGameCoords.y
+
+        # Scale
+        currentSprite.scale.setTo spriteScale
+
+        currentGameCoords.y += @caseSize
+
+      currentGameCoords.y = topLeftCoords.y
+      currentGameCoords.x += @caseSize
+
+
   checkWin: ->
-    if @nbCasesDiscoveredTotal >= @nbCasesTotal - @nbBombs
+    if @nbCasesDiscoveredTotal >= @nbCasesTotal - @nbBombs and @nbFlagsTotal == @nbBombs
       alert 'win!'
+
 
   getNbBomsAroundCase: (centerCase) ->
     nbBombsAround = 0
@@ -128,11 +153,11 @@ class Grid
       currentCase.addBomb()
 
 
-  getCaseAt: (coords) ->
-    assert coords.x >= 0 and coords.x < @w, "Column out of range : " + coords.x
-    assert coords.y >= 0 and coords.y < @h, "Line out of range : " + coords.y
+  getCaseAt: (gridcoords) ->
+    assert gridcoords.x >= 0 and gridcoords.x < @w, "Column out of range : " + gridcoords.x
+    assert gridcoords.y >= 0 and gridcoords.y < @h, "Line out of range : " + gridcoords.y
 
-    return @tab[coords.x][coords.y]
+    return @tab[gridcoords.x][gridcoords.y]
 
 
   getRandomCase: ->
@@ -146,8 +171,8 @@ class Grid
     randomCoords = new Coordinates randomX, randomY
 
 
-  isInGrid: (coords) ->
-    return coords.x >= 0 and coords.y >= 0 and coords.x < @w and coords.y < @h
+  isInGrid: (gridcoords) ->
+    return gridcoords.x >= 0 and gridcoords.y >= 0 and gridcoords.x < @w and gridcoords.y < @h
 
 
   toString: ->

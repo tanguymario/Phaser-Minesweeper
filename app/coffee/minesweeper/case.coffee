@@ -30,7 +30,7 @@ class Case
   # Sprite default size
   @S_SIZE = 16
 
-  constructor: (game, grid, gridCoords, bomb, gameCoords, spriteScale) ->
+  constructor: (game, grid, gridCoords, bomb) ->
     @game = game
     @grid = grid
 
@@ -41,10 +41,9 @@ class Case
     @nbBombsAround = 0
     @nbFlagsAround = 0
 
-    @sprite = @grid.sprites.create gameCoords.x, gameCoords.y, Case.S_CASE_UNCLICKED
+    @sprite = @grid.sprites.create 0, 0, Case.S_CASE_UNCLICKED
     @sprite.inputEnabled = true
     @sprite.events.onInputDown.add @onClick, @
-    @sprite.scale.setTo spriteScale, spriteScale
 
 
   onClick: ->
@@ -58,6 +57,7 @@ class Case
 
   updateNbBombsAroundCase: ->
     @nbBombsAround = @grid.getNbBomsAroundCase(@)
+
 
   show: (sprite, pointer) ->
     if @hasFlag or @discovered
