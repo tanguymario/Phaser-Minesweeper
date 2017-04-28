@@ -3,6 +3,8 @@ Phaser = require 'Phaser'
 Grid = require '../minesweeper/grid.coffee'
 Case = require '../minesweeper/case.coffee'
 
+InputCatcher = require '../input/input-catcher.coffee'
+
 config      = require '../config/config.coffee'
 
 debug       = require '../utils/debug.coffee'
@@ -22,12 +24,7 @@ class Game extends Phaser.State
   create: ->
     debug 'Create...', @, 'info', 30, debugThemes.Phaser
     @grid = new Grid @, 30, 15, 10, 25
-
-    @game.input.mouse.onMouseWheel = (event) ->
-      @game.state.states.Game.grid.zoomGrid event
-
-    @game.canvas.oncontextmenu = (e) ->
-      e.preventDefault()
+    @inputCatcher = new InputCatcher @game
 
 
 module.exports = Game

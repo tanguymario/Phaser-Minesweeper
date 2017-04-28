@@ -1,5 +1,9 @@
 Coordinates = require '../utils/coordinates.coffee'
 
+Rectangle = require '../utils/geometry/rectangle.coffee'
+
+GridLayout = require './grid-layout.coffee'
+
 Case = require './case.coffee'
 
 assert = require 'assert'
@@ -21,6 +25,7 @@ class Grid
     @nbBombs = nbBombs
     @caseSize = caseSize
     @sprites = @game.add.group()
+    @layout = new GridLayout @
 
     @nbCasesTotal = w * h
     @nbFlagsTotal = 0
@@ -42,38 +47,8 @@ class Grid
       for j in [0..@h - 1] by 1
         @tab[i][j].updateNbBombsAroundCase()
 
+    @layout.updateCasesTransform()
 
-    @updateCasesTransform()
-
-  zoomGrid: (event) ->
-    if event.shiftKey
-      @caseSize += event.wheelDeltaY / Grid.I_ZOOM_FACTOR
-      @updateCasesTransform()
-
-
-  updateCasesTransform: ->
-    topLeftX = @game.world.centerX - (@caseSize * @w) / 2 - @caseSize / 2
-    topLeftY = @game.world.centerY - (@caseSize * @h) / 2 - @caseSize / 2
-    topLeftCoords = new Coordinates topLeftX, topLeftY
-    currentGameCoords = topLeftCoords.clone()
-
-    spriteScale = @caseSize / Case.S_SIZE
-
-    for i in [0..@w - 1] by 1
-      for j in [0..@h - 1] by 1
-        currentSprite = @tab[i][j].sprite
-
-        # Position
-        currentSprite.x = currentGameCoords.x
-        currentSprite.y = currentGameCoords.y
-
-        # Scale
-        currentSprite.scale.setTo spriteScale
-
-        currentGameCoords.y += @caseSize
-
-      currentGameCoords.y = topLeftCoords.y
-      currentGameCoords.x += @caseSize
 
 
   checkWin: ->
@@ -93,11 +68,11 @@ class Grid
         currCaseCoords.y = centerCase.coords.y + j
 
         # Check if case in grid
-        if not @isInGrid currCaseCoords
+        if not @isInGridCoords currCaseCoords
           continue
 
         # Check if the case was not discovered
-        currentCase = @getCaseAt currCaseCoords
+        currentCase = @getCaseAtGridCoords currCaseCoords
         if currentCase.hasBomb
           nbBombsAround += 1
 
@@ -117,11 +92,11 @@ class Grid
         currCaseCoords.y = centerCase.coords.y + j
 
         # Check if case in grid
-        if not @isInGrid currCaseCoords
+        if not @isInGridCoords currCaseCoords
           continue
 
         # Check if the case was not discovered
-        currentCase = @getCaseAt currCaseCoords
+        currentCase = @getCaseAtGridCoords currCaseCoords
         cases.push currentCase
 
     return cases
@@ -153,16 +128,32 @@ class Grid
       currentCase.addBomb()
 
 
-  getCaseAt: (gridcoords) ->
+  getCaseAtGridCoords: (gridcoords) ->
     assert gridcoords.x >= 0 and gridcoords.x < @w, "Column out of range : " + gridcoords.x
     assert gridcoords.y >= 0 and gridcoords.y < @h, "Line out of range : " + gridcoords.y
 
     return @tab[gridcoords.x][gridcoords.y]
 
 
+  getCaseAtGameCoords: (gameCoords) ->
+    assert gameCoords.x >= 0 and gameCoords.x < @game.width, "X out of screen"
+    assert gameCoords.y >= 0 and gameCoords.y < @game.height, "Y out of screen"
+
+    widthPixels = @caseSize * w
+    heightPixels = @caseSize * h
+
+    # Get coords of minesweeper game
+    topLeftCoords = @layout.getTopLeftCoords()
+    rect = new Rectangle topLeftCoords, widthPixels, heightPixels
+
+    return null if rect.isOutside gameCoords
+
+    # TODO
+    return null
+
   getRandomCase: ->
     randomCoords = @getRandomCoordinates()
-    return @getCaseAt randomCoords
+    return @getCaseAtGridCoords randomCoords
 
 
   getRandomCoordinates: ->
@@ -171,7 +162,7 @@ class Grid
     randomCoords = new Coordinates randomX, randomY
 
 
-  isInGrid: (gridcoords) ->
+  isInGridCoords: (gridcoords) ->
     return gridcoords.x >= 0 and gridcoords.y >= 0 and gridcoords.x < @w and gridcoords.y < @h
 
 
