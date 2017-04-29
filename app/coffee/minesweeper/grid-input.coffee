@@ -36,7 +36,7 @@ class GridInput
       caseClicked = @getCaseFromMouse event
       if caseClicked?
         switch event.button
-          when 0 then @setCaseActive caseClicked
+          when 0, 1 then @setCaseActive caseClicked
           when 2 then caseClicked.toggleFlag()
 
 
@@ -47,10 +47,11 @@ class GridInput
     if @isMoving
       movement = new Coordinates event.movementX, event.movementY
       @gridLayout.moveGrid movement
-    else if @caseActive?
-      caseOnMouse = @getCaseFromMouse event
-      if caseOnMouse != @caseActive
-        @setCaseActive caseOnMouse
+    else if @currentButton?
+      if @currentButton != GridInput.I_MOUSE_RIGHT_BUTTON
+        caseOnMouse = @getCaseFromMouse event
+        if caseOnMouse != @caseActive
+          @setCaseActive caseOnMouse
 
 
   onMouseUp: (event) ->
@@ -72,16 +73,13 @@ class GridInput
       @gridLayout.zoomGrid event.wheelDeltaY / GridInput.I_ZOOM_FACTOR
 
 
-
   setCaseActive: (caseActive) ->
-    if @caseActive?
-      if not @caseActive.discovered
-        @caseActive.showInitial()
+    if @caseActive? and @caseActive.isClickable()
+      @caseActive.showInitial()
 
-    if caseActive?
-      if not caseActive.discovered
-        if @currentButton == GridInput.I_MOUSE_LEFT_BUTTON
-          caseActive.showMaybe()
+    if caseActive? and caseActive.isClickable()
+      if @currentButton == GridInput.I_MOUSE_LEFT_BUTTON
+        caseActive.showMaybe()
 
     @caseActive = caseActive
 

@@ -60,7 +60,7 @@ class Case
 
 
   show: (sprite, pointer) ->
-    if @hasFlag or @discovered
+    if not @isClickable()
       return
 
     @discovered = true
@@ -80,7 +80,7 @@ class Case
   showWithFlags: ->
     if not @discovered
       return
-      
+
     if @nbFlagsAround == @nbBombsAround
       cases = @grid.getCasesAround(@)
       for currentCase in cases
@@ -93,7 +93,7 @@ class Case
 
   clickBomb: ->
     @showBomb true
-    @grid.showBombs()
+    @grid.triggerEnd()
 
 
   showBomb: (clicked = false) ->
@@ -150,6 +150,10 @@ class Case
 
   removeBomb: ->
     @hasBomb = false
+
+
+  isClickable: ->
+    return not @discovered and not @hasFlag
 
 
   toString: ->

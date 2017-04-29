@@ -23,6 +23,9 @@ class Grid
     @sprites = @game.add.group()
     @layout = new GridLayout @game, @, caseSize
 
+    @isOver = false
+    @hasWin = false
+
     @nbCasesTotal = w * h
     @nbFlagsTotal = 0
     @nbCasesDiscoveredTotal = 0
@@ -50,6 +53,13 @@ class Grid
   checkWin: ->
     if @nbCasesDiscoveredTotal >= @nbCasesTotal - @nbBombs and @nbFlagsTotal == @nbBombs
       alert 'win!'
+      @isOver = true
+      @hasWin = true
+
+
+  triggerEnd: ->
+    @isOver = true
+    @showBombs()
 
 
   getNbBomsAroundCase: (centerCase) ->
@@ -102,7 +112,7 @@ class Grid
     for i in [0..@w - 1] by 1
       for j in [0..@h - 1] by 1
         currentCase = @tab[i][j]
-        if not currentCase.discovered
+        if currentCase.isClickable()
           if currentCase.hasBomb
             currentCase.showBomb()
           else if currentCase.hasFlag

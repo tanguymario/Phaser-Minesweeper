@@ -21,7 +21,7 @@ class Game extends Phaser.State
 
   create: ->
     debug 'Create...', @, 'info', 30, debugThemes.Phaser
-    @grid = new Grid @, 30, 15, 10, 25
+    @grid = new Grid @, 35, 15, 50, 25
 
     # Remove canvas context menu
     @game.canvas.oncontextmenu = (event) ->
