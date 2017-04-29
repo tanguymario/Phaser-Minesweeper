@@ -10,8 +10,11 @@ class Rectangle extends Polygon
     assert width >= 0, "Width must be positive : " + width
     assert height >= 0, "Height must be positive : " + height
 
-    topRight = new Coordinates topLeft.x + width, topLeft.y
-    bottomLeft = new Coordinates topLeft.x, topLeft.y + height
+    @width = width
+    @height = height
+
+    topRight = new Coordinates topLeft.x + @width, topLeft.y
+    bottomLeft = new Coordinates topLeft.x, topLeft.y + @height
     bottomRight = new Coordinates topRight.x, bottomLeft.y
 
     super topLeft, bottomLeft, bottomRight, topRight
@@ -33,9 +36,16 @@ class Rectangle extends Polygon
     return @points[2]
 
 
-  isInside: (coords) ->
+  isInside: (coords, checkBorder) ->
+    assert coords instanceof Coordinates, "Coordinates type : " + coords
+
     topLeft = @getTopLeft()
     bottomRight = @getBottomRight()
+
+    if not checkBorder
+      coordsOne = Coordinates.One()
+      topLeft = Coordinates.Add topLeft, coordsOne
+      bottomRight = Coordinates.Sub bottomRight, coordsOne
 
     if coords.x >= topLeft.x and coords.x <= bottomRight.x
       if coords.y >= topLeft.y and coords.y <= bottomRight.y
@@ -44,8 +54,16 @@ class Rectangle extends Polygon
     return false
 
 
-  isOutside: (coords )->
-    return !@isInside coords
+  isOutside: (coords, checkBorder)->
+    return !@isInside coords, checkBorder
+
+
+  getWidth: ->
+    return @width
+
+
+  getHeight: ->
+    return @height
 
 
   toString: ->

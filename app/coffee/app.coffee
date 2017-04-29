@@ -17,7 +17,7 @@ config      = require './config/config.coffee'
 debug       = require './utils/debug.coffee'
 debugThemes = require './utils/debug-themes.coffee'
 
-game = new Phaser.Game config.width, config.height, Phaser.AUTO, 'game-stage'
+game = new Phaser.Game config.width, config.height, Phaser.AUTO, config.canvasId
 
 if game?
   debug 'Phaser Game created successfully!', null, 'info', 0, debugThemes.Phaser

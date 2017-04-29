@@ -5,7 +5,6 @@ lerpUnclamped = require './math/lerp-unclamped.coffee'
 
 class Coordinates
 
-
   @Assert2Coords: (coordsA, coordsB) ->
     assert coordsA instanceof Coordinates, "CoordsA is not coordinates"
     assert coordsB instanceof Coordinates, "CoordsB is not coordinates"
@@ -52,6 +51,11 @@ class Coordinates
     x = lerpUnclamped coordsA.x, coordsB.x, value
     y = lerpUnclamped coordsA.y, coordsB.y, value
     return new Coordinates x, y
+
+
+  @One: ->
+    return new Coordinates 1, 1
+
 
   constructor: (x, y) ->
     @x = x

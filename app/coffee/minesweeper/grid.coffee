@@ -6,15 +6,12 @@ GridLayout = require './grid-layout.coffee'
 
 Case = require './case.coffee'
 
-assert = require 'assert'
+assert = require '../utils/assert.coffee'
 
 debug       = require '../utils/debug.coffee'
 debugThemes = require '../utils/debug-themes.coffee'
 
 class Grid
-
-  @I_ZOOM_FACTOR = 50
-
   constructor: (game, w, h, nbBombs, caseSize) ->
     assert nbBombs < w * h, "Too much bombs!"
 
@@ -23,9 +20,8 @@ class Grid
     @w = w
     @h = h
     @nbBombs = nbBombs
-    @caseSize = caseSize
     @sprites = @game.add.group()
-    @layout = new GridLayout @
+    @layout = new GridLayout @game, @, caseSize
 
     @nbCasesTotal = w * h
     @nbFlagsTotal = 0
@@ -113,12 +109,6 @@ class Grid
             currentCase.showWrongFlag()
 
 
-  removeListeners: ->
-    for i in [0..@w - 1] by 1
-      for j in [0..@h - 1] by 1
-        @tab[i][j].sprite.inputEnabled = false
-
-
   generateBombs: () ->
     for i in [0..@nbBombs - 1] by 1
       currentCase = @getRandomCase()
@@ -134,22 +124,6 @@ class Grid
 
     return @tab[gridcoords.x][gridcoords.y]
 
-
-  getCaseAtGameCoords: (gameCoords) ->
-    assert gameCoords.x >= 0 and gameCoords.x < @game.width, "X out of screen"
-    assert gameCoords.y >= 0 and gameCoords.y < @game.height, "Y out of screen"
-
-    widthPixels = @caseSize * w
-    heightPixels = @caseSize * h
-
-    # Get coords of minesweeper game
-    topLeftCoords = @layout.getTopLeftCoords()
-    rect = new Rectangle topLeftCoords, widthPixels, heightPixels
-
-    return null if rect.isOutside gameCoords
-
-    # TODO
-    return null
 
   getRandomCase: ->
     randomCoords = @getRandomCoordinates()

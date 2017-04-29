@@ -1,6 +1,6 @@
 Phaser = require 'Phaser'
 
-assert = require 'assert'
+assert = require '../utils/assert.coffee'
 
 debug       = require '../utils/debug.coffee'
 debugThemes = require '../utils/debug-themes.coffee'
@@ -78,6 +78,9 @@ class Case
 
 
   showWithFlags: ->
+    if not @discovered
+      return
+      
     if @nbFlagsAround == @nbBombsAround
       cases = @grid.getCasesAround(@)
       for currentCase in cases
@@ -90,7 +93,6 @@ class Case
 
   clickBomb: ->
     @showBomb true
-    @grid.removeListeners()
     @grid.showBombs()
 
 
@@ -105,6 +107,14 @@ class Case
 
   showWrongFlag: ->
     @sprite.loadTexture Case.S_CASE_WRONG_FLAG
+
+
+  showInitial: ->
+    @sprite.loadTexture Case.S_CASE_UNCLICKED
+
+
+  showMaybe: ->
+    @sprite.loadTexture Case.S_CASE_CLICKED
 
 
   toggleFlag: ->
@@ -125,6 +135,7 @@ class Case
       currentCase.nbFlagsAround += nbFlagsDifference
 
     @grid.nbFlagsTotal += nbFlagsDifference
+    @grid.checkWin()
 
     @sprite.loadTexture spriteKey
 

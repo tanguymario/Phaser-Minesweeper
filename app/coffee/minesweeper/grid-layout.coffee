@@ -1,37 +1,71 @@
 Coordinates = require '../utils/coordinates.coffee'
 
 Case = require './case.coffee'
+GridInput = require './grid-input.coffee'
 
-assert = require 'assert'
+Rectangle = require '../utils/geometry/rectangle.coffee'
+
+assert = require '../utils/assert.coffee'
 
 debug       = require '../utils/debug.coffee'
 debugThemes = require '../utils/debug-themes.coffee'
 
 class GridLayout
-  constructor: (grid) ->
-    @grid = grid
-    @game = @grid.game
 
-    @isMoving = false
+  @I_ZOOM_FACTOR = 50
+
+  constructor: (game, grid, caseSize) ->
+    @game = game
+    @grid = grid
+    @caseSize = caseSize
+
     @offset = new Coordinates @game.world.centerX, @game.world.centerY
 
+    @updateGridRect()
 
-  getTopLeftCoords: ->
-    topLeftX = @offset - (@grid.caseSize * @grid.w) / 2 - @grid.caseSize / 2
-    topLeftY = @offset - (@grid.caseSize * @grid.h) / 2 - @grid.caseSize / 2
-    return new Coordinates topLeftX, topLeftY
+    @input = new GridInput @game, @
+
+  getCaseAtGameCoords: (coords) ->
+    if @rect.isInside coords, false
+      topLeft = @rect.getTopLeft()
+      coords = Coordinates.Sub coords, topLeft
+      column = Math.floor coords.x / @caseSize
+      line = Math.floor coords.y / @caseSize
+
+      gridCoords = new Coordinates column, line
+      return @grid.getCaseAtGridCoords gridCoords
+
+    return null
 
 
-  zoomGrid: (event) ->
-    @caseSize += event.wheelDeltaY / Grid.I_ZOOM_FACTOR
+  moveGrid: (coords) ->
+    @offset = Coordinates.Add @offset, coords
+    @updateGridRect()
     @updateCasesTransform()
 
 
-  updateCasesTransform: ->
-    topLeftCoords = @getTopLeftCoords()
-    currentGameCoords = topLeftCoords.clone()
+  zoomGrid: (value) ->
+    @updateGridRect @caseSize + value
+    @updateCasesTransform()
 
-    spriteScale = @grid.caseSize / Case.S_SIZE
+
+  updateGridRect: (caseSize = @caseSize) ->
+    @caseSize = caseSize
+
+    topLeftX = @offset.x - (@caseSize * @grid.w) / 2 - @caseSize / 2
+    topLeftY = @offset.y - (@caseSize * @grid.h) / 2 - @caseSize / 2
+    topLeftCoords = new Coordinates topLeftX, topLeftY
+
+    widthPixels = @caseSize * @grid.w
+    heightPixels = @caseSize * @grid.h
+
+    @rect = new Rectangle topLeftCoords, widthPixels, heightPixels
+
+
+  updateCasesTransform: ->
+    currentGameCoords = @rect.getTopLeft().clone()
+
+    spriteScale = @caseSize / Case.S_SIZE
 
     for i in [0..@grid.w - 1] by 1
       for j in [0..@grid.h - 1] by 1
@@ -42,44 +76,12 @@ class GridLayout
         currentSprite.y = currentGameCoords.y
 
         # Scale
-        currentSprite.scale.setTo spriteScale
+        currentSprite.scale.setTo spriteScale, spriteScale
 
-        currentGameCoords.y += @grid.caseSize
+        currentGameCoords.y += @caseSize
 
-      currentGameCoords.y = topLeftCoords.y
-      currentGameCoords.x += @grid.caseSize
-
-
-  # Mouse events
-  onMouseDown: (event) ->
-    if event.shiftKey
-      if event.button == 1
-        @isMoving = true
-    else
-      caseClicked = @grid.getCaseAtGameCoords()
-      if caseClicked?
-        caseClicked.show()
-
-
-  onMouseMove: (event) ->
-    if not @isMoving
-      return
-
-    console.log event
-    # @offset.x += event.
-    # @offset.y += event.
-
-    @grid.updateCasesTransform()
-
-
-  onMouseUp: (event) ->
-    if @isMoving and event.button == 1
-      @isMoving = false
-
-
-  onMouseWheel: (event) ->
-    if event.shiftKey
-      @zoomGrid event
+      currentGameCoords.y = @rect.getTopLeft().y
+      currentGameCoords.x += @caseSize
 
 
 module.exports = GridLayout
