@@ -5,7 +5,7 @@ env = require '../config/env.coffee'
 
 DEBUG = env != environmentVars.release
 
-PRIORITY = Infinity
+PRIORITY = 50
 
 WHITELIST = []
 
@@ -25,7 +25,7 @@ getOptionsFromTheme = (theme) ->
   switch theme
     when debugThemes.Phaser then return 'color:white; background:rgba(225, 0, 0, 0.85); display:block;'
     when debugThemes.Player then return 'color:white; background:rgba(0, 0, 225, 0.85); display: block;'
-    when debugThemes.Mines then return 'color:white; background:rgba(92, 11, 232, 0.85); display: block;'
+    when debugThemes.Case then return 'color:white; background:rgba(92, 11, 232, 0.85); display: block;'
     when debugThemes.Grid then return 'color:white; background:rgba(0, 245, 0, 0.9); display:block'
     when debugThemes.Other then return 'color:white; background:rgba(125, 125, 125, 0.85); display: block;'
     else return null

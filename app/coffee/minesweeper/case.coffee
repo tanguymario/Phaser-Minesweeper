@@ -7,30 +7,19 @@ debugThemes = require '../utils/debug-themes.coffee'
 
 class Case
   # Sprite keys
-  @S_CASE_UNCLICKED = 'case-unclicked'
-  @S_CASE_CLICKED = 'case-clicked'
-  @S_CASE_FLAG = 'case-flag'
-  @S_CASE_DUNNO_UNCLICKED = 'case-dunno-unclicked'
-  @S_CASE_DUNNO_CLICKED = 'case-dunno-clicked'
-  @S_CASE_BOMB_UNCLICKED = 'case-bomb-unclicked'
-  @S_CASE_BOMB_CLICKED = 'case-bomb-clicked'
-  @S_CASE_WRONG_FLAG = 'case-wrong-flag'
-  @S_CASE_NUMBERS = [
-    'case-clicked'
-    'case-1'
-    'case-2'
-    'case-3'
-    'case-4'
-    'case-5'
-    'case-6'
-    'case-7'
-    'case-8'
-  ]
+  @S_CASE_UNCLICKED = 9
+  @S_CASE_CLICKED = 0
+  @S_CASE_FLAG = 10
+  @S_CASE_DUNNO_UNCLICKED = 12
+  @S_CASE_DUNNO_CLICKED = 12
+  @S_CASE_BOMB_UNCLICKED = 14
+  @S_CASE_BOMB_CLICKED = 13
+  @S_CASE_WRONG_FLAG = 11
+  @S_CASE_NUMBERS = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
-  # Sprite default size
-  @S_SIZE = 16
+  constructor: (game, grid, gridCoords, bomb, spritesheetKey) ->
+    debug 'constructor...', @, 'info', 100, debugThemes.Case
 
-  constructor: (game, grid, gridCoords, bomb) ->
     @game = game
     @grid = grid
 
@@ -41,12 +30,13 @@ class Case
     @nbBombsAround = 0
     @nbFlagsAround = 0
 
-    @sprite = @grid.sprites.create 0, 0, Case.S_CASE_UNCLICKED
+    @sprite = @grid.sprites.create 0, 0, spritesheetKey, Case.S_CASE_UNCLICKED
     @sprite.inputEnabled = true
     @sprite.events.onInputDown.add @onClick, @
 
 
   onClick: ->
+    debug 'onClick...', @, 'info', 100, debugThemes.Case
     if @game.input.activePointer.leftButton.isDown
       @show()
     else if @game.input.activePointer.rightButton.isDown
@@ -55,11 +45,8 @@ class Case
       @showWithFlags()
 
 
-  updateNbBombsAroundCase: ->
-    @nbBombsAround = @grid.getNbBomsAroundCase(@)
-
-
   show: (sprite, pointer) ->
+    debug 'show...', @, 'info', 100, debugThemes.Case
     if not @isClickable()
       return
 
@@ -78,6 +65,7 @@ class Case
 
 
   showWithFlags: ->
+    debug 'showWithFlags...', @, 'info', 100, debugThemes.Case
     if not @discovered
       return
 
@@ -87,37 +75,44 @@ class Case
         currentCase.show()
 
 
-  showNbBombsAround: () ->
-    @sprite.loadTexture Case.S_CASE_NUMBERS[@nbBombsAround]
+  showNbBombsAround: ->
+    debug 'showNbBombsAround...', @, 'info', 100, debugThemes.Case
+    @sprite.frame = Case.S_CASE_NUMBERS[@nbBombsAround]
 
 
   clickBomb: ->
+    debug 'clickBomb...', @, 'info', 100, debugThemes.Case
     @showBomb true
     @grid.triggerEnd()
 
 
   showBomb: (clicked = false) ->
+    debug 'showBomb...', @, 'info', 100, debugThemes.Case
     if clicked
       spriteKey = Case.S_CASE_BOMB_CLICKED
     else
       spriteKey = Case.S_CASE_BOMB_UNCLICKED
 
-    @sprite.loadTexture spriteKey
+    @sprite.frame = spriteKey
 
 
   showWrongFlag: ->
-    @sprite.loadTexture Case.S_CASE_WRONG_FLAG
+    debug 'showWrongFlag...', @, 'info', 100, debugThemes.Case
+    @sprite.frame = Case.S_CASE_WRONG_FLAG
 
 
   showInitial: ->
-    @sprite.loadTexture Case.S_CASE_UNCLICKED
+    debug 'showInitial...', @, 'info', 100, debugThemes.Case
+    @sprite.frame = Case.S_CASE_UNCLICKED
 
 
   showMaybe: ->
-    @sprite.loadTexture Case.S_CASE_CLICKED
+    debug 'showMaybe...', @, 'info', 100, debugThemes.Case
+    @sprite.frame = Case.S_CASE_CLICKED
 
 
   toggleFlag: ->
+    debug 'toggleFlag...', @, 'info', 100, debugThemes.Case
     if @discovered
       return
 
@@ -137,26 +132,43 @@ class Case
     @grid.nbFlagsTotal += nbFlagsDifference
     @grid.checkWin()
 
-    @sprite.loadTexture spriteKey
+    @sprite.frame = spriteKey
 
 
   toggleBomb: ->
+    debug 'toggleBomb...', @, 'info', 100, debugThemes.Case
     @hasBomb = !@hasBomb
 
 
   addBomb: ->
+    debug 'addBomb...', @, 'info', 100, debugThemes.Case
     @hasBomb = true
 
 
   removeBomb: ->
+    debug 'removeBomb...', @, 'info', 100, debugThemes.Case
     @hasBomb = false
 
 
   isClickable: ->
+    debug 'isClickable...', @, 'info', 100, debugThemes.Case
     return not @discovered and not @hasFlag
 
 
+  isANeighbourOf: (otherCase) ->
+    casesAround = @grid.getCasesAround @
+    for caseAround in casesAround
+      return true if caseAround == otherCase
+
+    return false
+
+
+  getCasesAround: ->
+    return @grid.getCasesAround @
+
+
   toString: ->
+    debug 'toString...', @, 'info', 100, debugThemes.Case
     return """
     Case :
       - coords : #{@coords}

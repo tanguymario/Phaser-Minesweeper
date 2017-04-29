@@ -1,3 +1,3 @@
 Enum = require 'enum'
 
-module.exports = new Enum(['Phaser', 'Player', 'Mines', 'Grid', 'Other'])
+module.exports = new Enum(['Phaser', 'Player', 'Case', 'Grid', 'Other'])
