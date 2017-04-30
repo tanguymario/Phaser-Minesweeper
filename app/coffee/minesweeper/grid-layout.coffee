@@ -40,6 +40,16 @@ class GridLayout
     return null
 
 
+  getGameCoords: (currentCase) ->
+    debug 'getGameCoords...', @, 'info', 100, debugThemes.Grid
+    assert currentCase?, 'Current case null'
+
+    gameCoords = @rect.getTopLeft().clone()
+    gameCoords.x += currentCase.coords.x * @caseSize
+    gameCoords.y += currentCase.coords.y * @caseSize
+
+    return gameCoords
+
   moveGrid: (coords) ->
     debug 'moveGrid...', @, 'info', 100, debugThemes.Grid
     @offset = Coordinates.Add @offset, coords
@@ -75,14 +85,7 @@ class GridLayout
 
     for i in [0..@grid.w - 1] by 1
       for j in [0..@grid.h - 1] by 1
-        currentSprite = @grid.tab[i][j].sprite
-
-        # Position
-        currentSprite.x = currentGameCoords.x
-        currentSprite.y = currentGameCoords.y
-
-        # Scale
-        currentSprite.scale.setTo spriteScale, spriteScale
+        @grid.tab[i][j].updateCaseTransform currentGameCoords, spriteScale
 
         currentGameCoords.y += @caseSize
 

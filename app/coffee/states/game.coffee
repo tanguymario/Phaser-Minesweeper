@@ -32,7 +32,7 @@ class Game extends Phaser.State
 
     # Manage fullscreen
     @game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT
-    
+
     # Remove canvas context menu
     @game.canvas.oncontextmenu = (event) ->
       event.preventDefault()

@@ -1,5 +1,7 @@
 Phaser = require 'Phaser'
 
+Coordinates = require '../utils/coordinates.coffee'
+
 assert = require '../utils/assert.coffee'
 
 debug       = require '../utils/debug.coffee'
@@ -31,24 +33,14 @@ class Case
     @nbFlagsAround = 0
 
     @sprite = @grid.sprites.create 0, 0, spritesheetKey, Case.S_CASE_UNCLICKED
-    @sprite.inputEnabled = true
-    @sprite.events.onInputDown.add @onClick, @
-
-
-  onClick: ->
-    debug 'onClick...', @, 'info', 100, debugThemes.Case
-    if @game.input.activePointer.leftButton.isDown
-      @show()
-    else if @game.input.activePointer.rightButton.isDown
-      @toggleFlag()
-    else if @game.input.activePointer.middleButton.isDown
-      @showWithFlags()
 
 
   show: (sprite, pointer) ->
     debug 'show...', @, 'info', 100, debugThemes.Case
     if not @isClickable()
       return
+
+    @showDownDiselected()
 
     @discovered = true
     @grid.nbCasesDiscoveredTotal += 1
@@ -101,15 +93,73 @@ class Case
     @sprite.frame = Case.S_CASE_WRONG_FLAG
 
 
-  showInitial: ->
-    debug 'showInitial...', @, 'info', 100, debugThemes.Case
+  showDownDiselected: ->
+    debug 'showDiselected...', @, 'info', 100, debugThemes.Case
+
+    # Simple change frame
+    ###
     @sprite.frame = Case.S_CASE_UNCLICKED
+    ###
+
+    # Reset 1st tween
+    ###
+    tween = @game.add.tween @sprite
+    tween.to @topLeft, 100, Phaser.Easing.Exponential.easeOut
+    tween.start()
+    ###
+
+    ###
+    tween = @game.add.tween @sprite.scale
+    tween.to {x: @scale, y: @scale}, 100, Phaser.Easing.Exponential.easeOut
+    tween.start()
+    ###
+
+    tween = @game.add.tween @sprite
+    tween.to {angle: 0}, 100, Phaser.Easing.Exponential.easeOut
+    tween.start()
 
 
-  showMaybe: ->
-    debug 'showMaybe...', @, 'info', 100, debugThemes.Case
+  showDownSelected: ->
+    debug 'showSelected...', @, 'info', 100, debugThemes.Case
+
+    # Simple change frame
+    ###
     @sprite.frame = Case.S_CASE_CLICKED
+    ###
 
+    ###
+    tween = @game.add.tween @sprite
+    targetCoords = Coordinates.Add @topLeft, new Coordinates -3, -3
+    tween.to targetCoords, 100, Phaser.Easing.Exponential.easeOut
+    tween.start()
+    ###
+
+    ###
+    tween = @game.add.tween @sprite.scale
+    tween.to {x: @scale * 1.15, y: @scale * 1.15}, 100, Phaser.Easing.Exponential.easeOut
+    tween.start()
+    ###
+
+    tween = @game.add.tween @sprite
+    tween.to {angle: 90}, 100, Phaser.Easing.Exponential.easeOut
+    tween.start()
+
+
+  showOverDiselected: ->
+    # TODO
+
+
+  showOverSelected: ->
+    # TODO
+
+
+  updateCaseTransform: (gameCoords, spriteScale) ->
+    @topLeft = @grid.layout.getGameCoords(@)
+    @scale = spriteScale
+
+    @sprite.x = @topLeft.x
+    @sprite.y = @topLeft.y
+    @sprite.scale.setTo spriteScale, spriteScale
 
   toggleFlag: ->
     debug 'toggleFlag...', @, 'info', 100, debugThemes.Case

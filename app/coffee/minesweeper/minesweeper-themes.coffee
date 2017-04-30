@@ -9,3 +9,7 @@ module.exports =
     source: minesweeperDir + 'theme-simple.png'
     key: 'theme-simple'
     spriteSize: 32
+  Blur:
+    source: minesweeperDir + 'theme-blur.png'
+    key: 'theme-blur'
+    spriteSize: 32

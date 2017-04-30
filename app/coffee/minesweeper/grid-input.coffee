@@ -91,22 +91,22 @@ class GridInput
   setCaseActive: (caseActive) ->
     debug 'setCaseActive...', @, 'info', 1000, debugThemes.Grid
     if @caseActive?
-      @caseActive.showInitial() if @caseActive.isClickable()
+      @caseActive.showDownDiselected() if @caseActive.isClickable()
       switch @currentButton
         when GridInput.I_MOUSE_MIDDLE
           casesAround = @caseActive.getCasesAround()
           for caseAround in casesAround
             if caseAround.isClickable()
-              caseAround.showInitial()
+              caseAround.showDownDiselected()
 
     if caseActive?
-      caseActive.showMaybe() if caseActive.isClickable()
+      caseActive.showDownSelected() if caseActive.isClickable()
       switch @currentButton
         when GridInput.I_MOUSE_MIDDLE
           casesAround = caseActive.getCasesAround()
           for caseAround in casesAround
             if caseAround.isClickable()
-              caseAround.showMaybe()
+              caseAround.showDownSelected()
 
     @caseActive = caseActive
 
