@@ -50,6 +50,7 @@ class GridLayout
 
     return gameCoords
 
+
   moveGrid: (coords) ->
     debug 'moveGrid...', @, 'info', 100, debugThemes.Grid
     @offset = Coordinates.Add @offset, coords

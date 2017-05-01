@@ -102,11 +102,9 @@ class Case
     ###
 
     # Reset 1st tween
-    ###
     tween = @game.add.tween @sprite
     tween.to @topLeft, 100, Phaser.Easing.Exponential.easeOut
     tween.start()
-    ###
 
     ###
     tween = @game.add.tween @sprite.scale
@@ -114,9 +112,11 @@ class Case
     tween.start()
     ###
 
+    ###
     tween = @game.add.tween @sprite
     tween.to {angle: 0}, 100, Phaser.Easing.Exponential.easeOut
     tween.start()
+    ###
 
 
   showDownSelected: ->
@@ -127,12 +127,10 @@ class Case
     @sprite.frame = Case.S_CASE_CLICKED
     ###
 
-    ###
     tween = @game.add.tween @sprite
     targetCoords = Coordinates.Add @topLeft, new Coordinates -3, -3
     tween.to targetCoords, 100, Phaser.Easing.Exponential.easeOut
     tween.start()
-    ###
 
     ###
     tween = @game.add.tween @sprite.scale
@@ -140,9 +138,11 @@ class Case
     tween.start()
     ###
 
+    ###
     tween = @game.add.tween @sprite
     tween.to {angle: 90}, 100, Phaser.Easing.Exponential.easeOut
     tween.start()
+    ###
 
 
   showOverDiselected: ->
